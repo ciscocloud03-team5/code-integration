@@ -7,7 +7,7 @@ pipeline {
             kind: Pod
             spec:
               containers:
-              - name: python
+              - name: python-docker
                 image: python:3.9-slim
                 command:
                 - cat
@@ -17,6 +17,12 @@ pipeline {
                 command:
                 - cat
                 tty: true
+              volumes:
+              - name: workspace-volume
+                emptyDir: {}
+              volumeMounts:
+              - name: workspace-volume
+                mountPath: /tmp/workspace
             """
         }
     }
@@ -25,41 +31,36 @@ pipeline {
         APP_NAME = "flask-prometheus-app"
         RELEASE = "1.0.0"
         DOCKER_USER = "ksi05298"
-        //dockerhub credential
-        DOCKER_PASS = 'pjt-dockerhubtoken'
+        DOCKER_PASS = credentials('pjt-dockerhubtoken') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     
     stages {
-        stage("Checkout from SCM"){
+        stage("Checkout from SCM") {
             steps {
-                container('python') {
+                container('python-docker') {
                     script {
-                        // 'github'는 전 단계에서 Jenkins Credentials에 정의 
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                    }
-                }
-                container('docker') {
-                    script {
-                        // 'github'는 전 단계에서 Jenkins Credentials에 정의 
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        dir('/tmp/workspace') {
+                            git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        }
                     }
                 }
             }
         }
-        
 
         stage('Run Tests') {
             steps {
-                container('python') {
+                container('python-docker') {
                     script {
-                        sh '''
-                        python -m venv venv
-                        . venv/bin/activate
-                        pip install -r requirements.txt
-                        pytest
-                        '''
+                        dir('/tmp/workspace') {
+                            sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install -r requirements.txt
+                            pytest
+                            '''
+                        }
                     }
                 }
             }
@@ -69,10 +70,12 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dockerImage = docker.build "${IMAGE_NAME}"
-                        docker.withRegistry('', DOCKER_PASS) {
-                            dockerImage.push("${IMAGE_TAG}")
-                            dockerImage.push('latest')
+                        dir('/tmp/workspace') {
+                            dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                            docker.withRegistry('', DOCKER_PASS) {
+                                dockerImage.push("${IMAGE_TAG}")
+                                dockerImage.push('latest')
+                            }
                         }
                     }
                 }
