@@ -10,7 +10,10 @@ pipeline {
               - name: python
                 image: python:3.9-slim
                 command:
-                - cat
+                - sh
+                args:
+                - -c
+                - 'cat'
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
@@ -18,7 +21,10 @@ pipeline {
               - name: docker
                 image: docker:19.03.12
                 command:
-                - cat
+                - sh
+                args:
+                - -c
+                - 'cat'
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
@@ -38,7 +44,7 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
-    
+
     stages {
         stage("Checkout from SCM") {
             steps {
@@ -57,6 +63,7 @@ pipeline {
                 container('python') {
                     script {
                         dir('/tmp/workspace') {
+                            sh 'python --version'
                             sh '''
                             python -m venv venv
                             . venv/bin/activate
@@ -74,6 +81,7 @@ pipeline {
                 container('docker') {
                     script {
                         dir('/tmp/workspace') {
+                            sh 'docker --version'
                             dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                             docker.withRegistry('', DOCKER_PASS) {
                                 dockerImage.push("${IMAGE_TAG}")
