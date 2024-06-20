@@ -7,7 +7,7 @@ pipeline {
             kind: Pod
             spec:
               containers:
-              - name: python-docker
+              - name: python
                 image: python:3.9-slim
                 command:
                 - cat
@@ -39,7 +39,7 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                container('python-docker') {
+                container('python') {
                     script {
                         dir('/tmp/workspace') {
                             git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
@@ -51,7 +51,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                container('python-docker') {
+                container('python') {
                     script {
                         dir('/tmp/workspace') {
                             sh '''
