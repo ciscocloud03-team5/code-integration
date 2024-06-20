@@ -26,15 +26,22 @@ pipeline {
         RELEASE = "1.0.0"
         DOCKER_USER = "ksi05298"
         //dockerhub credential
-        DOCKER_PASS = 'pjt-dockerhub'
+        DOCKER_PASS = 'pjt-dockerhubtoken'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     
     stages {
-        stage('Checkout') {
+        stage("Cleanup Workspace"){
             steps {
-                checkout scm
+                cleanWs()
+            }
+        }
+
+        stage("Checkout from SCM"){
+	// 'github'는 전 단계에서 Jenkins Credentials에 정의 
+            steps {
+                git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
             }
         }
 
@@ -57,7 +64,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                        dockerImage = docker.build "${IMAGE_NAME}"
                         docker.withRegistry('', DOCKER_PASS) {
                             dockerImage.push("${IMAGE_TAG}")
                             dockerImage.push('latest')
