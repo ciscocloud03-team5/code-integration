@@ -13,7 +13,7 @@ pipeline {
                 - sh
                 args:
                 - -c
-                - 'cat'
+                - 'while true; do sleep 300; done;'
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
@@ -24,7 +24,7 @@ pipeline {
                 - sh
                 args:
                 - -c
-                - 'cat'
+                - 'while true; do sleep 300; done;'
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
