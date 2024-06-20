@@ -1,0 +1,70 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'kubernetes'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: python
+                image: python:3.9-slim
+                command:
+                - cat
+                tty: true
+              - name: docker
+                image: docker:19.03.12
+                command:
+                - cat
+                tty: true
+            """
+        }
+    }
+
+    environment {
+        APP_NAME = "flask-prometheus-app"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "ksi05298"
+        //dockerhub credential
+        DOCKER_PASS = 'pjt-dockerhub'
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    script {
+                        sh '''
+                        python -m venv venv
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                        pytest
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                container('docker') {
+                    script {
+                        dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                        docker.withRegistry('', DOCKER_PASS) {
+                            dockerImage.push("${IMAGE_TAG}")
+                            dockerImage.push('latest')
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
