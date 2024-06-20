@@ -12,19 +12,23 @@ pipeline {
                 command:
                 - cat
                 tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /tmp/workspace
               - name: docker
                 image: docker:19.03.12
                 command:
                 - cat
                 tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /tmp/workspace
               volumes:
               - name: workspace-volume
                 emptyDir: {}
-              volumeMounts:
-              - name: workspace-volume
-                mountPath: /tmp/workspace
             """
         }
+    }
     }
 
     environment {
