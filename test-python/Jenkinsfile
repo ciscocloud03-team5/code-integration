@@ -100,7 +100,7 @@ pipeline {
                     script {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
                             sh 'echo $DOCKER_PASS'
-                            sh 'docker build --no-cache -t ${IMAGE_NAME} .'
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                             sh 'docker push ${IMAGE_NAME}:latest'
