@@ -17,22 +17,9 @@ pipeline {
                 volumeMounts:
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
-              - name: docker
-                image: docker:19.03.12
-                tty: true
-                securityContext:
-                  privileged: true
-                volumeMounts:
-                - name: workspace-volume
-                  mountPath: /home/jenkins/agent
-                - name: docker-sock
-                  mountPath: /var/run/docker.sock
               volumes:
               - name: workspace-volume
                 emptyDir: {}
-              - name: docker-sock
-                hostPath:
-                  path: /var/run/docker.sock
             """
         }
     }
@@ -65,9 +52,9 @@ pipeline {
                 container('python') {
                     script {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
-                            sh 'pwd'
-                            sh 'ls -al'
                             sh '''
+                            pwd
+                            ls -al
                             python -m venv venv
                             . venv/bin/activate
                             pip install -r requirements.txt
@@ -81,17 +68,15 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             steps {
-                container('docker') {
-                    script {
-                        dir('/home/jenkins/agent/workspace/test-python/test-python') {
-                            sh 'pwd'
-                            sh 'ls -al'
-                            sh '''
-                            docker build -t ${IMAGE_NAME} .
-                            echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin
-                            docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                            docker push ${IMAGE_NAME}:latest
-                            '''
+                script {
+                    dir('/home/jenkins/agent/workspace/test-python/test-python') {
+                        docker.withRegistry('',DOCKER_PASS) {
+                            docker_image = docker.build "${IMAGE_NAME}"
+                        }
+
+                        docker.withRegistry('',DOCKER_PASS) {
+                            docker_image.push("${IMAGE_TAG}")
+                            docker_image.push('latest')
                         }
                     }
                 }
