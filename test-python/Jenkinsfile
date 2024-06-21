@@ -29,7 +29,7 @@ pipeline {
                     volumeMounts:
                     - name: workspace-volume
                       mountPath: /home/jenkins/agent
-                    - name: docker-sock
+                    - name: docker-socket
                       mountPath: /var/run
                   - name: docker-daemon
                     image: docker:dind
