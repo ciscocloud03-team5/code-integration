@@ -9,29 +9,10 @@ pipeline {
               containers:
               - name: python
                 image: python:3.9-slim
-                command:
-                - sh
-                args:
-                - -c
-                - 'while true; do sleep 300; done;'
                 tty: true
-                volumeMounts:
-                - name: workspace-volume
-                  mountPath: /tmp/workspace
               - name: docker
                 image: docker:19.03.12
-                command:
-                - sh
-                args:
-                - -c
-                - 'while true; do sleep 300; done;'
                 tty: true
-                volumeMounts:
-                - name: workspace-volume
-                  mountPath: /tmp/workspace
-              volumes:
-              - name: workspace-volume
-                emptyDir: {}
             """
         }
     }
@@ -46,47 +27,36 @@ pipeline {
     }
 
     stages {
-        stage("Checkout from SCM") {
+        stage('Checkout from SCM & Run Tests') {
             steps {
                 container('python') {
                     script {
-                        dir('/tmp/workspace') {
-                            git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                        }
+                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                    }
+                    script {
+                        sh '''
+                        echo "Run Tests"
+                        python -m venv venv
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                        pytest
+                        '''
                     }
                 }
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                container('python') {
-                    script {
-                        dir('/tmp/workspace') {
-                            sh 'python --version'
-                            sh '''
-                            python -m venv venv
-                            . venv/bin/activate
-                            pip install -r requirements.txt
-                            pytest
-                            '''
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Build and Push Docker Image') {
+        stage('Checkout from SCM & Build and Push Docker Image') {
             steps {
                 container('docker') {
                     script {
-                        dir('/tmp/workspace') {
-                            sh 'docker --version'
-                            dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-                            docker.withRegistry('', DOCKER_PASS) {
-                                dockerImage.push("${IMAGE_TAG}")
-                                dockerImage.push('latest')
-                            }
+                            git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                    }
+                    script {
+                        dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                        docker.withRegistry('', DOCKER_PASS) {
+                            dockerImage.push("${IMAGE_TAG}")
+                            dockerImage.push('latest')
                         }
                     }
                 }
