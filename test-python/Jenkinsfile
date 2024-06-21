@@ -31,7 +31,10 @@ pipeline {
             steps {
                 container('python') {
                     script {
+                        sh 'pwd'
                         git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        sh 'pwd'
+                        sh 'ls -al'
                     }
                     script {
                         sh '''
