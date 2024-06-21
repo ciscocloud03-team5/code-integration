@@ -48,6 +48,7 @@ pipeline {
                     sh 'ls -al test-python'
                     git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
                     sh 'ls -al'
+                    sh 'ls -al test-python'
                 }
             }
         }
