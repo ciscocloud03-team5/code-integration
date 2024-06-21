@@ -18,14 +18,21 @@ pipeline {
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
               - name: docker
-                image: docker:cli
+                image: docker:19.03.12
                 tty: true
+                securityContext:
+                  privileged: true
                 volumeMounts:
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
+                - name: docker-sock
+                  mountPath: /var/run/docker.sock
               volumes:
               - name: workspace-volume
                 emptyDir: {}
+              - name: docker-sock
+                hostPath:
+                  path: /var/run/docker.sock
             """
         }
     }
