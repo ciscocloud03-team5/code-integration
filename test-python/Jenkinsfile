@@ -65,7 +65,9 @@ pipeline {
                         sh 'pwd'
                         sh 'ls -al'
                         sh 'ls -al test-python'
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        git credentialsId: 'pjt-githubtoken',
+                          url: 'https://github.com/ciscocloud03-team5/code-integration',
+                          branch: 'pjt'
                         sh 'ls -al'
                         sh 'ls -al test-python'
                     }
@@ -97,10 +99,17 @@ pipeline {
                 container('docker') {
                     script {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
-                            sh 'docker build --no-cache -t ${IMAGE_NAME} .'
-                            sh 'echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin'
-                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
-                            sh 'docker push ${IMAGE_NAME}:latest'
+                            // sh 'docker build --no-cache -t ${IMAGE_NAME} .'
+                            // sh 'echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin'
+                            // sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            // sh 'docker push ${IMAGE_NAME}:latest'
+                            docker.withRegistry('',DOCKER_PASS) {
+                                docker_image = docker.build "${IMAGE_NAME}"
+                            }
+                            docker.withRegistry('',DOCKER_PASS) {
+                                docker_image.push("${IMAGE_TAG}")
+                                docker_image.push('latest')
+                            }
                         }
                     }
                 }
