@@ -52,7 +52,7 @@ pipeline {
         RELEASE = "1.0.0"
         DOCKER_USER = "ksi05298"
         // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
-        DOCKER_PASS = credentials('pjt-dockerhubtoken')
+        DOCKERHUB_CREDENTIALS = credentials('pjt-dockerhubtoken')
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -101,7 +101,7 @@ pipeline {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
                             sh 'echo $DOCKER_PASS'
                             sh 'docker build --no-cache -t ${IMAGE_NAME} .'
-                            sh 'echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin'
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                             sh 'docker push ${IMAGE_NAME}:latest'
                         }
