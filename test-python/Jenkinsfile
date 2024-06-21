@@ -18,27 +18,20 @@ pipeline {
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
               - name: docker
-                image: docker:19.03.12
+                image: docker
                 tty: true
-                securityContext:
-                  privileged: true
                 volumeMounts:
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
-                - name: docker-sock
-                  mountPath: /var/run/docker.sock
               volumes:
               - name: workspace-volume
                 emptyDir: {}
-              - name: docker-sock
-                hostPath:
-                  path: /var/run/docker.sock
             """
         }
     }
 
     environment {
-        APP_NAME = "flask-prometheus-app"
+        APP_NAME = "flask-app"
         RELEASE = "1.0.0"
         DOCKER_USER = "ksi05298"
         DOCKER_PASS = credentials('pjt-dockerhubtoken') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
