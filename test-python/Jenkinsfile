@@ -1,33 +1,49 @@
 pipeline {
     agent {
         kubernetes {
-            cloud 'team5-eks'
-            yaml """
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-              - name: python
-                image: python:3.9-slim
-                tty: true
-                volumeMounts:
-                - name: workspace-volume
-                  mountPath: /home/jenkins/agent
-              - name: docker
-                image: docker:19.03.12-dind
-                tty: true
-                securityContext:
-                  privileged: true
-                env:
-                - name: DOCKER_TLS_CERTDIR
-                  value: ""
-                volumeMounts:
-                - name: workspace-volume
-                  mountPath: /home/jenkins/agent
-              volumes:
-              - name: workspace-volume
-                emptyDir: {}
-            """
+            label 'jenkins-agent'
+            defaultContainer 'jnlp'
+            containers {
+                containerTemplate {
+                    name 'python'
+                    image 'python:3.9-slim'
+                    command 'cat'
+                    ttyEnabled true
+                    volumeMounts {
+                        volumeMount {
+                            name 'workspace-volume'
+                            mountPath '/home/jenkins/agent'
+                        }
+                    }
+                }
+                containerTemplate {
+                    name 'docker'
+                    image 'docker:20.10.7'
+                    command 'cat'
+                    ttyEnabled true
+                    volumeMounts {
+                        volumeMount {
+                            name 'workspace-volume'
+                            mountPath '/home/jenkins/agent'
+                        }
+                        volumeMount {
+                            name 'docker-sock'
+                            mountPath '/var/run/docker.sock'
+                        }
+                    }
+                }
+            }
+            volumes {
+                emptyDirVolume {
+                    mountPath '/home/jenkins/agent'
+                    name 'workspace-volume'
+                }
+                hostPathVolume {
+                    mountPath '/var/run/docker.sock'
+                    hostPath '/var/run/docker.sock'
+                    name 'docker-sock'
+                }
+            }
         }
     }
 
@@ -80,25 +96,10 @@ pipeline {
                 container('docker') {
                     script {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
-                            sh 'pwd'
-                            sh 'ls -al'
-                            sh '''
-                            if [ -f /var/run/docker.pid ]; then
-                                rm /var/run/docker.pid
-                            fi
-                            dockerd &
-
-                            # Docker 데몬이 완전히 시작될 때까지 기다림
-                            while (! docker info > /dev/null 2>&1); do
-                                echo "Waiting for Docker to launch..."
-                                sleep 1
-                            done
-
-                            docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                            echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin
-                            docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                            docker push ${IMAGE_NAME}:latest
-                            '''
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                            sh 'echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            sh 'docker push ${IMAGE_NAME}:latest'
                         }
                     }
                 }
