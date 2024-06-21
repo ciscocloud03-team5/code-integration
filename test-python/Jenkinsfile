@@ -39,11 +39,13 @@ pipeline {
         stage("Checkout from SCM") {
             steps {
                 container('python') {
-                    dir('/home/jenkins/agent/workspace') {
-                        sh 'pwd'
-                        sh 'ls -al'
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                        sh 'ls -al'
+                    script {
+                        dir('/home/jenkins/agent/workspace') {
+                            sh 'pwd'
+                            sh 'ls -al'
+                            git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                            sh 'ls -al'
+                        }
                     }
                 }
             }
@@ -52,15 +54,17 @@ pipeline {
         stage('Run Tests') {
             steps {
                 container('python') {
-                    dir('/home/jenkins/agent/workspace') {
-                        sh 'pwd'
-                        sh 'ls -al'
-                        sh '''
-                        python -m venv venv
-                        . venv/bin/activate
-                        pip install -r requirements.txt
-                        pytest
-                        '''
+                    script {
+                        dir('/home/jenkins/agent/workspace') {
+                            sh 'pwd'
+                            sh 'ls -al'
+                            sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install -r requirements.txt
+                            pytest
+                            '''
+                        }
                     }
                 }
             }
