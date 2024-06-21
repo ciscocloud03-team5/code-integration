@@ -42,13 +42,11 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                container('python') {
-                    script {
-                        sh 'pwd'
-                        sh 'ls -al'
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                        sh 'ls -al'
-                    }
+                script {
+                    sh 'pwd'
+                    sh 'ls -al'
+                    git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                    sh 'ls -al'
                 }
             }
         }
