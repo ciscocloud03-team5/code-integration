@@ -43,13 +43,15 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                script {
-                    sh 'pwd'
-                    sh 'ls -al'
-                    sh 'ls -al test-python'
-                    git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                    sh 'ls -al'
-                    sh 'ls -al test-python'
+                container('python') {
+                    script {
+                        sh 'pwd'
+                        sh 'ls -al'
+                        sh 'ls -al test-python'
+                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        sh 'ls -al'
+                        sh 'ls -al test-python'
+                    }
                 }
             }
         }
@@ -84,7 +86,8 @@ pipeline {
                             if [ -f /var/run/docker.pid ]; then
                                 rm /var/run/docker.pid
                             fi
-                            docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                            dockerd & sleep 30
+                            docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .
                             echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin
                             docker push ${IMAGE_NAME}:${IMAGE_TAG}
                             docker push ${IMAGE_NAME}:latest
@@ -96,4 +99,9 @@ pipeline {
         }
     }
 
+    post {
+        always {
+            cleanWs()
+        }
+    }
 }
