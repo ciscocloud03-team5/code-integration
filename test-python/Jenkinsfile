@@ -79,10 +79,13 @@ pipeline {
                         dir('/home/jenkins/agent/workspace/test-python/test-python') {
                             sh 'pwd'
                             sh 'ls -al'
-                            dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                            docker.withRegistry('',DOCKER_PASS) {
+                                docker_image = docker.build "${IMAGE_NAME}"
+                            }
+                            sh 'ls -al'
                             docker.withRegistry('', DOCKER_PASS) {
-                                dockerImage.push("${IMAGE_TAG}")
-                                dockerImage.push('latest')
+                                docker_image.push("${IMAGE_TAG}")
+                                docker_image.push('latest')
                             }
                         }
                     }
