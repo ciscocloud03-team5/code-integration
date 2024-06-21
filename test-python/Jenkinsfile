@@ -18,7 +18,7 @@ pipeline {
                 - name: workspace-volume
                   mountPath: /home/jenkins/agent
               - name: docker
-                image: docker
+                image: docker:19.03.12
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
