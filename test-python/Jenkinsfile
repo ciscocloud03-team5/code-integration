@@ -7,9 +7,9 @@ pipeline {
             kind: Pod
             spec:
               securityContext:
-                runAsUser: 1000
-                runAsGroup: 1000
-                fsGroup: 1000
+                runAsUser: 0
+                runAsGroup: 0
+                fsGroup: 0
               containers:
               - name: python
                 image: python:3.9-slim
