@@ -37,11 +37,12 @@ pipeline {
                         sh '''
                         cd test-python
                         echo "Run Tests"
+                        pwd
                         ls -al
                         python -m venv venv
                         . venv/bin/activate
                         pip install -r requirements.txt
-                        pytest
+                        pytest .
                         '''
                     }
                 }
