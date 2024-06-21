@@ -69,13 +69,15 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 container('docker') {
-                    dir('/home/jenkins/agent/workspace') {
-                        sh 'pwd'
-                        sh 'ls -al'
-                        dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-                        docker.withRegistry('', DOCKER_PASS) {
-                            dockerImage.push("${IMAGE_TAG}")
-                            dockerImage.push('latest')
+                    script {
+                        dir('/home/jenkins/agent/workspace') {
+                            sh 'pwd'
+                            sh 'ls -al'
+                            dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                            docker.withRegistry('', DOCKER_PASS) {
+                                dockerImage.push("${IMAGE_TAG}")
+                                dockerImage.push('latest')
+                            }
                         }
                     }
                 }
