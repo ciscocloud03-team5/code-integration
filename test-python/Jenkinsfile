@@ -10,9 +10,18 @@ pipeline {
               - name: python
                 image: python:3.9-slim
                 tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent/workspace
               - name: docker
                 image: docker:19.03.12
                 tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent/workspace
+              volumes:
+              - name: workspace-volume
+                emptyDir: {}
             """
         }
     }
@@ -27,39 +36,42 @@ pipeline {
     }
 
     stages {
-        stage('Checkout from SCM & Run Tests') {
+        stage("Checkout from SCM") {
             steps {
                 container('python') {
-                    script {
-                        sh 'pwd'
-                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                    dir('/home/jenkins/agent/workspace') {
                         sh 'pwd'
                         sh 'ls -al'
+                        git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
+                        sh 'ls -al'
                     }
-                    script {
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    dir('/home/jenkins/agent/workspace') {
+                        sh 'pwd'
+                        sh 'ls -al'
                         sh '''
-                        cd test-python
-                        echo "Run Tests"
-                        pwd
-                        ls -al
                         python -m venv venv
                         . venv/bin/activate
                         pip install -r requirements.txt
-                        pytest .
+                        pytest
                         '''
                     }
                 }
             }
         }
 
-        stage('Checkout from SCM & Build and Push Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 container('docker') {
-                    script {
-                            git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
-                    }
-                    script {
-                        sh 'cd test-python'
+                    dir('/home/jenkins/agent/workspace') {
+                        sh 'pwd'
+                        sh 'ls -al'
                         dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                         docker.withRegistry('', DOCKER_PASS) {
                             dockerImage.push("${IMAGE_TAG}")
