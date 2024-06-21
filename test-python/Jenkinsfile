@@ -16,13 +16,13 @@ pipeline {
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent/workspace
+                  mountPath: /home/jenkins/agent
               - name: docker
                 image: docker:19.03.12
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent/workspace
+                  mountPath: /home/jenkins/agent
               volumes:
               - name: workspace-volume
                 emptyDir: {}
@@ -57,7 +57,7 @@ pipeline {
             steps {
                 container('python') {
                     script {
-                        dir('/home/jenkins/agent/workspace') {
+                        dir('/home/jenkins/agent/workspace/test-python') {
                             sh 'pwd'
                             sh 'ls -al'
                             sh '''
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dir('/home/jenkins/agent/workspace') {
+                        dir('/home/jenkins/agent/workspace/test-python') {
                             sh 'pwd'
                             sh 'ls -al'
                             dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
