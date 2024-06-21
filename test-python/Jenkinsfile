@@ -34,6 +34,7 @@ pipeline {
                         git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
                     }
                     script {
+                        sh 'cd test-python'
                         sh '''
                         echo "Run Tests"
                         ls -al
@@ -54,6 +55,7 @@ pipeline {
                             git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
                     }
                     script {
+                        sh 'cd test-python'
                         dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                         docker.withRegistry('', DOCKER_PASS) {
                             dockerImage.push("${IMAGE_TAG}")
