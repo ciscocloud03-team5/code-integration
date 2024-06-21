@@ -6,6 +6,10 @@ pipeline {
             apiVersion: v1
             kind: Pod
             spec:
+              securityContext:
+                runAsUser: 0
+                runAsGroup: 0
+                fsGroup: 0
               containers:
               - name: python
                 image: python:3.9-slim
@@ -41,6 +45,7 @@ pipeline {
                 script {
                     sh 'pwd'
                     sh 'ls -al'
+                    sh 'ls -al test-python'
                     git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
                     sh 'ls -al'
                 }
