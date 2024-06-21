@@ -57,7 +57,7 @@ pipeline {
             steps {
                 container('python') {
                     script {
-                        dir('/home/jenkins/agent/workspace/test-python') {
+                        dir('/home/jenkins/agent/workspace/test-python/test-python') {
                             sh 'pwd'
                             sh 'ls -al'
                             sh '''
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dir('/home/jenkins/agent/workspace/test-python') {
+                        dir('/home/jenkins/agent/workspace/test-python/test-python') {
                             sh 'pwd'
                             sh 'ls -al'
                             dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
