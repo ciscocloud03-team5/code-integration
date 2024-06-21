@@ -34,8 +34,8 @@ pipeline {
                         git branch: 'pjt', credentialsId: 'pjt-githubtoken', url: 'https://github.com/ciscocloud03-team5/code-integration'
                     }
                     script {
-                        sh 'cd test-python'
                         sh '''
+                        cd test-python
                         echo "Run Tests"
                         ls -al
                         python -m venv venv
