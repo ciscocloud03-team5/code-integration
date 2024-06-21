@@ -86,7 +86,14 @@ pipeline {
                             if [ -f /var/run/docker.pid ]; then
                                 rm /var/run/docker.pid
                             fi
-                            dockerd & sleep 30
+                            dockerd &
+
+                            # Docker 데몬이 완전히 시작될 때까지 기다림
+                            while (! docker info > /dev/null 2>&1); do
+                                echo "Waiting for Docker to launch..."
+                                sleep 1
+                            done
+
                             docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .
                             echo $DOCKER_PASS | docker login -u ${DOCKER_USER} --password-stdin
                             docker push ${IMAGE_NAME}:${IMAGE_TAG}
