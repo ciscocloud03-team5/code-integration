@@ -13,7 +13,7 @@ pipeline {
               serviceAccountName: jenkins-admin
               containers:
               - name: python
-                image: python:3.9-slim
+                image: Python 3.10-alpine
                 command:
                 - sleep
                 args:
@@ -52,7 +52,7 @@ pipeline {
 
     environment {
         APP_NAME = "flask-app" // 애플리케이션 이름
-        RELEASE = "1.0.0" // 릴리즈 버전
+        RELEASE = "1.4" // 릴리즈 버전
         DOCKER_USER = "ksi05298" // Docker Hub 사용자 이름
         DOCKERHUB_CREDENTIALS = credentials('pjt-dockerhubtoken') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
@@ -87,7 +87,7 @@ pipeline {
                             sh '''
                             python -m venv venv
                             . venv/bin/activate
-                            pip install -r requirements.txt
+                            pip3 install -r requirements.txt
                             pytest
                             '''
                         }
