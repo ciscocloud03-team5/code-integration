@@ -1,7 +1,11 @@
 pipeline {
     agent {
+        // 이 섹션은 Kubernetes 환경과 Jenkins 에이전트용 Pod 템플릿을 정의
+        // python, docker, dind 컨테이너 존재
+        // 'docker-daemon' 컨테이너는 Docker in Docker(DIND) 모드를 사용하여 도커 데몬을 실행
+        // 'workspace-volume'와 'docker-socket' 볼륨은 컨테이너 간에 데이터를 공유하는 데 사용
         kubernetes {
-            cloud 'team5-eks' // 클러스터 이름 설정
+            cloud 'team5-eks'
             yaml """
             apiVersion: v1
             kind: Pod
