@@ -6,42 +6,42 @@ pipeline {
             apiVersion: v1
             kind: Pod
             spec:
-              serviceAccountName: jenkins-admin // Jenkins 서비스 계정 이름
+              serviceAccountName: jenkins-admin
               containers:
               - name: python
-                image: python:3.9-slim // Python 이미지를 사용
+                image: python:3.9-slim
                 command:
                 - sleep
                 args:
-                - 99d // 컨테이너가 99일 동안 동작
+                - 99d
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent // 워크스페이스 볼륨 마운트
+                  mountPath: /home/jenkins/agent
               - name: docker
-                image: docker // Docker 이미지를 사용
+                image: docker
                 command:
                 - sleep
                 args:
-                - 99d // 컨테이너가 99일 동안 동작
+                - 99d
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent // 워크스페이스 볼륨 마운트
+                  mountPath: /home/jenkins/agent
                 - name: docker-socket
-                  mountPath: /var/run // Docker 소켓 볼륨 마운트
-              - name: docker-daemon // Docker 데몬 컨테이너 정의
-                image: docker:dind // Docker in Docker 이미지를 사용
+                  mountPath: /var/run
+              - name: docker-daemon
+                image: docker:dind
                 securityContext:
-                  privileged: true // Privileged 모드로 실행
+                  privileged: true
                 volumeMounts:
                 - name: docker-socket
-                  mountPath: /var/run // Docker 소켓 볼륨 마운트
+                  mountPath: /var/run
               volumes:
               - name: workspace-volume
-                emptyDir: {} // 임시 빈 디렉토리 볼륨
+                emptyDir: {}
               - name: docker-socket
-                emptyDir: {} // 임시 빈 디렉토리 볼륨
+                emptyDir: {}
             """
         }
     }
@@ -81,10 +81,10 @@ pipeline {
                             sh 'pwd'
                             sh 'ls -al'
                             sh '''
-                            python -m venv venv // 가상 환경 생성
-                            . venv/bin/activate // 가상 환경 활성화
-                            pip install -r requirements.txt // 종속성 설치
-                            pytest // 테스트 실행
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install -r requirements.txt
+                            pytest
                             '''
                         }
                     }
