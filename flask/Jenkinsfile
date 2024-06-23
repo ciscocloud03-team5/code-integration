@@ -81,11 +81,10 @@ pipeline {
             steps {
                 container('python') {
                     script {
-                        dir('/home/jenkins/agent/workspace/flask') { // 작업 디렉토리 설정
+                        dir('/home/jenkins/agent/workspace/flask/flask') { // 작업 디렉토리 설정
                             sh 'pwd'
                             sh 'ls -al'
                             sh 'ls'
-                            sh 'ls -al flask'
                             sh '''
                             python -m venv venv
                             . venv/bin/activate
