@@ -57,7 +57,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('yunjin6121-dockerhub') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
-        WORKSPACE_DIR = '/home/jenkins/agent/workspace/yjk-test/yjk-test'
     }
 
     stages {
@@ -82,11 +81,14 @@ pipeline {
             steps {
                 container('python') {
                     script {
+                        dir('/home/jenkins/agent/workspace/yjk-test/yjk-test') { // 작업 디렉토리 설정
+                        sh 'pwd'
+                        sh 'ls -al'
                         sh '''
-                        cd $WORKSPACE_DIR
                         . venv/bin/activate
                         pytest
                         '''
+                        }
                     }
                 }
             }
