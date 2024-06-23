@@ -1,71 +1,71 @@
 pipeline {
     agent {
         kubernetes {
-            cloud 'team5-eks'
+            cloud 'team5-eks' // 클러스터 이름 설정
             yaml """
             apiVersion: v1
             kind: Pod
             spec:
-              serviceAccountName: jenkins-admin
+              serviceAccountName: jenkins-admin // Jenkins 서비스 계정 이름
               containers:
               - name: python
-                image: python:3.9-slim
+                image: python:3.9-slim // Python 이미지를 사용
                 command:
                 - sleep
                 args:
-                - 99d
+                - 99d // 컨테이너가 99일 동안 동작
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent
+                  mountPath: /home/jenkins/agent // 워크스페이스 볼륨 마운트
               - name: docker
-                image: docker
+                image: docker // Docker 이미지를 사용
                 command:
                 - sleep
                 args:
-                - 99d
+                - 99d // 컨테이너가 99일 동안 동작
                 tty: true
                 volumeMounts:
                 - name: workspace-volume
-                  mountPath: /home/jenkins/agent
+                  mountPath: /home/jenkins/agent // 워크스페이스 볼륨 마운트
                 - name: docker-socket
-                  mountPath: /var/run
-              - name: docker-daemon
-                image: docker:dind
+                  mountPath: /var/run // Docker 소켓 볼륨 마운트
+              - name: docker-daemon // Docker 데몬 컨테이너 정의
+                image: docker:dind // Docker in Docker 이미지를 사용
                 securityContext:
-                  privileged: true
+                  privileged: true // Privileged 모드로 실행
                 volumeMounts:
                 - name: docker-socket
-                  mountPath: /var/run
+                  mountPath: /var/run // Docker 소켓 볼륨 마운트
               volumes:
               - name: workspace-volume
-                emptyDir: {}
+                emptyDir: {} // 임시 빈 디렉토리 볼륨
               - name: docker-socket
-                emptyDir: {}
+                emptyDir: {} // 임시 빈 디렉토리 볼륨
             """
         }
     }
 
     environment {
-        APP_NAME = "flask-app"
-        RELEASE = "1.0.0"
-        DOCKER_USER = "ksi05298"
-        DOCKERHUB_CREDENTIALS = credentials('pjt-dockerhubtoken')
-        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        APP_NAME = "flask-app" // 애플리케이션 이름
+        RELEASE = "1.0.0" // 릴리즈 버전
+        DOCKER_USER = "ksi05298" // Docker Hub 사용자 이름
+        DOCKERHUB_CREDENTIALS = credentials('pjt-dockerhubtoken') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
     }
 
     stages {
-        stage("Checkout from SCM") {
+        stage("Checkout from SCM") { // 소스 코드 관리(SCM)에서 체크아웃 단계
             steps {
                 container('python') {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
                         sh 'ls -al test-python'
-                        git credentialsId: 'pjt-githubtoken',
-                          url: 'https://github.com/ciscocloud03-team5/code-integration',
-                          branch: 'pjt'
+                        git credentialsId: 'pjt-githubtoken', // GitHub 자격증명 사용
+                          url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
+                          branch: 'pjt' // 브랜치 이름
                         sh 'ls -al'
                         sh 'ls -al test-python'
                     }
@@ -73,18 +73,18 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests') { // 테스트 실행 단계
             steps {
                 container('python') {
                     script {
-                        dir('/home/jenkins/agent/workspace/test-python/test-python') {
+                        dir('/home/jenkins/agent/workspace/test-python/test-python') { // 작업 디렉토리 설정
                             sh 'pwd'
                             sh 'ls -al'
                             sh '''
-                            python -m venv venv
-                            . venv/bin/activate
-                            pip install -r requirements.txt
-                            pytest
+                            python -m venv venv // 가상 환경 생성
+                            . venv/bin/activate // 가상 환경 활성화
+                            pip install -r requirements.txt // 종속성 설치
+                            pytest // 테스트 실행
                             '''
                         }
                     }
@@ -92,16 +92,16 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
             steps {
                 container('docker') {
                     script {
-                        dir('/home/jenkins/agent/workspace/test-python/test-python') {
-                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
-                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .'
-                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
-                            sh 'docker push ${IMAGE_NAME}:latest'
+                        dir('/home/jenkins/agent/workspace/test-python/test-python') { // 작업 디렉토리 설정
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .' // Docker 이미지 빌드
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .' // Docker 이미지 빌드(latest 태그)
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin' // Docker 로그인
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}' // Docker 이미지 푸시
+                            sh 'docker push ${IMAGE_NAME}:latest' // Docker 이미지 푸시(latest 태그)
                         }
                     }
                 }
