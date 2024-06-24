@@ -118,7 +118,7 @@ pipeline {
                     //  -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded'
                     //  --data 'IMAGE_TAG=${IMAGE_TAG}' 'jenkins:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
                     build job: 'gitops-test-python', parameters: [
-                        string(name: 'IMAGE_TAG', value: ${IMAGE_TAG})
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
                     ]
                 }
             }
