@@ -1,0 +1,21 @@
+# Stage 1: Build Java application
+FROM maven:3.8.1-openjdk-17 AS builder
+WORKDIR /usr/src/app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package
+
+# Stage 2: Set up Minecraft server
+FROM openjdk:17-jdk-alpine
+WORKDIR /usr/src/minecraft
+ADD https://launcher.mojang.com/v1/objects/{MINECRAFT_SERVER_JAR}.jar server.jar
+RUN echo eula=true > eula.txt
+
+# Copy Java application from builder stage
+COPY --from=builder /usr/src/app/target/app-1.0-SNAPSHOT.jar /usr/src/minecraft/app.jar
+
+# Expose Minecraft server port
+EXPOSE 25565
+
+# Run Minecraft server and Java application
+CMD ["sh", "-c", "java -jar app.jar & java -Xmx1024M -Xms1024M -jar server.jar nogui"]
