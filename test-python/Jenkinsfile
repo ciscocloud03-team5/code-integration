@@ -57,7 +57,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('pjt-dockerhubtoken') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
-        JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN") // GitOps 파이프라인을 트리거하기 위한 Jenkins 토큰
     }
 
     stages {
