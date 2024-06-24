@@ -62,17 +62,15 @@ pipeline {
     stages {
         stage("Checkout from SCM") { // 소스 코드 관리(SCM)에서 체크아웃 단계
             steps {
-                container('python') {
-                    script {
-                        sh 'pwd'
-                        sh 'ls -al'
-                        sh 'ls -al test-python'
-                        git credentialsId: 'pjt-githubtoken', // GitHub 자격증명 사용
-                          url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
-                          branch: 'pjt' // 브랜치 이름
-                        sh 'ls -al'
-                        sh 'ls -al test-python'
-                    }
+                script {
+                    sh 'pwd'
+                    sh 'ls -al'
+                    sh 'ls -al test-python'
+                    git credentialsId: 'pjt-githubtoken', // GitHub 자격증명 사용
+                        url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
+                        branch: 'pjt' // 브랜치 이름
+                    sh 'ls -al'
+                    sh 'ls -al test-python'
                 }
             }
         }
