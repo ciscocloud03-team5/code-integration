@@ -75,49 +75,49 @@ pipeline {
             }
         }
 
-//         stage('Run Tests') { // 테스트 실행 단계
-//             steps {
-//                 container('python') {
-//                     script {
-//                         dir('/home/jenkins/agent/workspace/test-python/test-python') { // 작업 디렉토리 설정
-//                             sh 'pwd'
-//                             sh 'ls -al'
-//                             sh '''
-//                             python -m venv venv
-//                             . venv/bin/activate
-//                             pip install -r requirements.txt
-//                             pytest
-//                             '''
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+        stage('Run Tests') { // 테스트 실행 단계
+            steps {
+                container('sparkjava') {
+                    script {
+                        dir('/home/jenkins/agent/workspace/test_pipe/sparkjava/sparkjava/sparkjava') { // 작업 디렉토리 설정
+                            sh 'pwd'
+                            sh 'ls -al'
+                            sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install -r requirements.txt
+                            pytest
+                            '''
+                        }
+                    }
+                }
+            }
+        }
 
-//         stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
-//             steps {
-//                 container('docker') {
-//                     script {
-//                         dir('/home/jenkins/agent/workspace/test-python/test-python') { // 작업 디렉토리 설정
-//                             sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .' // Docker 이미지 빌드
-//                             sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .' // Docker 이미지 빌드(latest 태그)
-//                             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin' // Docker 로그인
-//                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}' // Docker 이미지 푸시
-//                             sh 'docker push ${IMAGE_NAME}:latest' // Docker 이미지 푸시(latest 태그)
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+        stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
+            steps {
+                container('docker') {
+                    script {
+                        dir('/home/jenkins/agent/workspace/test_pipe/sparkjava/sparkjava/sparkjava') { // 작업 디렉토리 설정
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .' // Docker 이미지 빌드
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .' // Docker 이미지 빌드(latest 태그)
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin' // Docker 로그인
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}' // Docker 이미지 푸시
+                            sh 'docker push ${IMAGE_NAME}:latest' // Docker 이미지 푸시(latest 태그)
+                        }
+                    }
+                }
+            }
+        }
 
-//         stage("Trigger CD Pipeline") {
-//             steps {
-//                 script {
-//                     build job: 'gitops-test-python', parameters: [
-//                         string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
-//                     ]
-//                 }
-//             }
-//        }
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-sparkjava', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+       }
     }
 }
