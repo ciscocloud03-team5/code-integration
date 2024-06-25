@@ -91,12 +91,12 @@ cat testfile.txt
                             // sh 'pwd'
                             // sh 'ls -al'
                             // sh '''
-                            // mvn clean install
-                            // mvn test
+                            // mvn clean install -DskipTests
+                            // mvn test -q
                             // '''
                         }
                     }
-                }
+                }  
             }
         }
 
