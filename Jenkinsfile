@@ -3,16 +3,15 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "eleys7485/number-guessing-game"
+        GIT_REPO = "https://github.com/ciscocloud03-team5/code-integration.git"
+        GIT_CREDENTIALS_ID = "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" // 젠킨스에 저장된 GitHub 자격 증명 ID
     }
 
     stages {
         stage('Checkout') {
             steps {
-                sh '''
-                    # Git 저장소에서 소스 코드를 체크아웃
-                    git clone https://github.com/ciscocloud03-team5/code-integration.git
-                    cd code-integration
-                '''
+                // Git 저장소에서 소스 코드를 체크아웃
+                git url: "${GIT_REPO}", credentialsId: "${GIT_CREDENTIALS_ID}", branch: 'main'
             }
         }
         stage('Build') {
