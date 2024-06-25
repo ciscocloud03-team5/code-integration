@@ -1,0 +1,97 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'team5-eks'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              serviceAccountName: jenkins-admin
+              containers:
+              - name: node
+                image: node:20.13.1
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+              - name: docker
+                image: docker
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+                - name: docker-socket
+                  mountPath: /var/run
+              - name: docker-daemon
+                image: docker:dind
+                securityContext:
+                  privileged: true
+                volumeMounts:
+                - name: docker-socket
+                  mountPath: /var/run
+              volumes:
+              - name: workspace-volume
+                emptyDir: {}
+              - name: docker-socket
+                emptyDir: {}
+            """
+        }
+    }
+
+    environment {
+        APP_NAME = "pokerogue-local"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "ksi05298"
+        DOCKERHUB_CREDENTIALS = 'pjt-dockerhubtoken')
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage("Checkout from SCM") {
+            steps {
+                container('node') {
+                    script {
+                        git credentialsId: 'pjt-githubtoken',
+                            url: 'https://github.com/ciscocloud03-team5/code-integration.git',
+                            branch: 'pjt'
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                container('docker') {
+                    script {
+                        dir('/home/jenkins/agent/workspace/pokerogue/pokerogue') {
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .'
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            sh 'docker push ${IMAGE_NAME}:latest'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-pokerogue', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+        }
+    }
+}
