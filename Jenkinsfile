@@ -8,8 +8,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                sh{
                 // Git 저장소에서 소스 코드를 체크아웃
                 git clone 'https://github.com/ciscocloud03-team5/code-integration.git'
+                }
             }
         }
         stage('Build') {
