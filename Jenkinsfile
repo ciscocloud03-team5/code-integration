@@ -4,18 +4,17 @@ pipeline {
     environment {
         DOCKER_IMAGE = "eleys7485/number-guessing-game"
         GIT_REPO = "https://github.com/ciscocloud03-team5/code-integration.git"
-        GIT_CREDENTIALS_ID = "ocr" // 젠킨스에 저장된 GitHub 자격 증명 ID
+        GIT_TOKEN_CREDENTIALS_ID = "ocr" // 젠킨스에 등록된 GitHub PAT 자격 증명 ID
     }
 
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    // GitHub 자격 증명 가져오기
-                    withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    // GitHub PAT을 사용하여 Git 저장소에서 소스 코드를 체크아웃
+                    withCredentials([string(credentialsId: "${GIT_TOKEN_CREDENTIALS_ID}", variable: 'GIT_TOKEN')]) {
                         sh '''
-                            # Git 저장소에서 소스 코드를 체크아웃
-                            git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ciscocloud03-team5/code-integration.git
+                            git clone https://${GIT_TOKEN}@github.com/ciscocloud03-team5/code-integration.git
                             cd code-integration
                         '''
                     }
@@ -44,4 +43,3 @@ pipeline {
         }
     }
 }
-
