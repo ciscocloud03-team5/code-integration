@@ -80,12 +80,20 @@ pipeline {
                 container('sparkjava') {
                     script {
                         dir('/home/jenkins/agent/workspace/test_pipe/sparkjava/sparkjava/sparkjava') { // 작업 디렉토리 설정
-                            sh 'pwd'
-                            sh 'ls -al'
-                            sh '''
-                            mvn clean install
-                            mvn test
-                            '''
+
+sh 'pwd'
+sh 'ls -al'
+sh '''
+echo "Hello, Jenkins!" > testfile.txt
+cat testfile.txt
+''' 
+
+                            // sh 'pwd'
+                            // sh 'ls -al'
+                            // sh '''
+                            // mvn clean install
+                            // mvn test
+                            // '''
                         }
                     }
                 }
