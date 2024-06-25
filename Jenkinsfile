@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // GitHub에서 소스 코드 체크아웃
-                git credentialsId: 'code-integration-ocr', // GitHub 자격증명 사용
+                git credentialsId: 'code-integration', // GitHub 자격증명 사용
                     url: 'https://github.com/ciscocloud03-team5/code-integration.git', // GitHub 리포지토리 URL
                     branch: 'main' // 브랜치 이름
             }
