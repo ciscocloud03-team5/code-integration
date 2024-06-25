@@ -2,23 +2,24 @@
 
 import random
 
-def number_guessing_game():
+def main():
     number_to_guess = random.randint(1, 100)
     attempts = 0
-    guess = None
 
-    print("숫자 맞추기 게임에 오신 것을 환영합니다! 1부터 100 사이의 숫자를 맞춰보세요.")
+    print("Welcome to the Number Guessing Game!")
+    print("I've picked a number between 1 and 100. Try to guess it!")
 
-    while guess != number_to_guess:
-        guess = int(input("숫자를 입력하세요: "))
+    while True:
+        guess = int(input("Your guess: "))
         attempts += 1
 
         if guess < number_to_guess:
-            print("더 큰 숫자입니다. 다시 시도하세요.")
+            print("Too low! Try again.")
         elif guess > number_to_guess:
-            print("더 작은 숫자입니다. 다시 시도하세요.")
+            print("Too high! Try again.")
         else:
-            print(f"축하합니다! {attempts}번 만에 맞추셨습니다.")
+            print(f"Congratulations! You've guessed the number {number_to_guess} in {attempts} attempts.")
+            break
 
 if __name__ == "__main__":
-    number_guessing_game()
+    main()
