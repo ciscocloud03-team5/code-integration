@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "eleys7485/number-guessing-game"
         GIT_REPO = "https://github.com/ciscocloud03-team5/code-integration.git"
-        GIT_CREDENTIALS_ID = "github-credentials-id" // 젠킨스에 저장된 GitHub 자격 증명 ID
+        GIT_CREDENTIALS_ID = "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" // 젠킨스에 저장된 GitHub 자격 증명 ID
     }
 
     stages {
