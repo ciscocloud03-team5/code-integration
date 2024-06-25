@@ -12,8 +12,8 @@ pipeline {
             steps {
                 // GitHub에서 소스 코드 체크아웃
                 git credentialsId: 'your-github-credentials-id', // GitHub 자격증명 사용
-                    url: 'https://github.com/your-github-org/your-repo.git', // GitHub 리포지토리 URL
-                    branch: 'main' // 브랜치 이름
+                    url: 'https://github.com/ciscocloud03-team5/code-integration.git', // GitHub 리포지토리 URL
+                    branch: 'ocr' // 브랜치 이름
             }
         }
 
