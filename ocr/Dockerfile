@@ -1,24 +1,15 @@
-# Start with a base image that has Java installed
-FROM openjdk:17-jdk-alpine
+# Base image with Python 3.8
+FROM python:3.8
 
-# Set environment variables
-ENV MINECRAFT_VERSION=1.17.1
-ENV MINECRAFT_SERVER_URL=https://launcher.mojang.com/v1/objects/0d10ecbc93d403e71e44cc55bd26b43e05426c4a/server.jar
+# Set working directory
+WORKDIR /app
 
-# Create a directory for the Minecraft server
-RUN mkdir /minecraft
+# Copy requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Change to the Minecraft server directory
-WORKDIR /minecraft
+# Copy the Python script for the game
+COPY guess_number_game.py .
 
-# Download the Minecraft server jar
-RUN wget $MINECRAFT_SERVER_URL -O server.jar
-
-# Agree to the EULA
-RUN echo "eula=true" > eula.txt
-
-# Expose the default Minecraft port
-EXPOSE 25565
-
-# Run the Minecraft server
-CMD ["java", "-Xmx1024M", "-Xms1024M", "-jar", "server.jar", "nogui"]
+# Command to run the game when container starts
+CMD ["python", "guess_number_game.py"]
