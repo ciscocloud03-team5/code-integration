@@ -8,8 +8,8 @@ pipeline {
             spec:
               serviceAccountName: jenkins-admin
               containers:
-              - name: alpine
-                image: alpine:latest
+              - name: nginx
+                image: nginx:alpine
                 command:
                 - sleep
                 args:
