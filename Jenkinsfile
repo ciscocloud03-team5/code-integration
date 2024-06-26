@@ -1,4 +1,4 @@
-ipeline {
+pipeline {
     agent any
     environment {
         GIT_CREDENTIALS = credentials('your-ssh-credential-id')
