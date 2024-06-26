@@ -112,16 +112,16 @@ pipeline {
         }
 
 
-// gitops 연동하는 파이프라인 만들어서 버전관리하는 yaml 같이 넣어두고 파이프라인 작동시키기
-//         stage("Trigger CD Pipeline") {
-//             steps {
-//                 script {
-//                     build job: 'gitops-sparkjava', parameters: [
-//                         string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
-//                     ]
-//                 }
-//             }
-//        }
+gitops 연동하는 파이프라인 만들어서 버전관리하는 yaml 같이 넣어두고 파이프라인 작동시키기
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-sparkjava', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+       }
 
 
 
