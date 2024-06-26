@@ -1,5 +1,5 @@
 # base image
-FROM alpine:latest
+FROM nginx:alpine
 
 # directory set
 WORKDIR /app
