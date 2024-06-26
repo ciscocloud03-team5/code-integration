@@ -47,7 +47,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "2048"		// 애플리케이션 이름
+        APP_NAME = "2048-local"		// 애플리케이션 이름
         RELEASE = "1.0.0"		// 릴리즈 버전
         DOCKER_USER = "yunjin6121"	// DockerHub 사용자 이름
         DOCKERHUB_CREDENTIALS = credentials('yunjin6121-dockerhub')
