@@ -79,7 +79,7 @@ pipeline {
             steps {
                 container('python') {
                     script {
-                        dir('/home/jenkins/agent/workspace/fajfkhifwif/) { // 작업 디렉토리 설정
+                        dir('/home/jenkins/agent/workspace/fajfkhifwif/') {     // 작업 디렉토리 설정
                             sh 'pwd'
                             sh 'ls -al'
                             sh 'ls'
