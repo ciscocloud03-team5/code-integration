@@ -66,7 +66,7 @@ pipeline {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
-                        git credentialsId: 'rootssv', // GitHub 자격증명 사용
+                        git credentialsId: 'ocr', // GitHub 자격증명 사용
                           url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
                           branch: 'ocr' // 브랜치 이름
                         sh 'ls -al'
@@ -111,3 +111,4 @@ pipeline {
        
     }
 }
+
