@@ -108,7 +108,18 @@ pipeline {
                 }
             }
         }
-       
+       ...
+       stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-ocr', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+       }
+    }
+}
     }
 }
 
