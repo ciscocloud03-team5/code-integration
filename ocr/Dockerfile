@@ -1,15 +1,24 @@
-# Python base image
+# 공식 경량 Python 3.9 이미지를 사용합니다
 FROM python:3.9-slim
 
-# 앱 소스코드 복사
-COPY . /app
+# 시스템 종속성을 설치합니다
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# 작업 디렉토리 설정
+# 컨테이너 내 작업 디렉토리를 설정합니다
 WORKDIR /app
 
-# 필요한 패키지 설치
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt  # 필요한 경우 requirements.txt 파일을 작성하여 추가 패키지를 설치할 수 있습니다.
+# requirements 파일을 컨테이너로 복사합니다
+COPY requirements.txt .
 
-# 애플리케이션 실행 (예: 숫자 맞추기 게임 실행)
-CMD ["python", "number_guessing_game.py"]
+# 필요한 종속성을 설치합니다
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 애플리케이션 코드의 나머지 부분을 컨테이너로 복사합니다
+COPY . .
+
+# 애플리케이션을 실행할 명령을 설정합니다
+CMD ["python", "your_script.py"]
