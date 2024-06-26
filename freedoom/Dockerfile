@@ -11,7 +11,7 @@ ENV TZ=Asia/Seoul
 RUN apt-get update && \
     apt-get install -y tzdata wget unzip zandronum && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    dpkg-reconfigure --frontend noninteractive tzdata
+    dpkg-reconfigure --frontend noninteractive tzdata \
     build-essential \
     git \
     libsdl2-dev \
