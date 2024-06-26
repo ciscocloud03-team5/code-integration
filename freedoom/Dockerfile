@@ -9,14 +9,13 @@ ENV TZ=Asia/Seoul
 
 # 필요 패키지 설치
 RUN apt-get update && \
-    apt-get install -y tzdata wget unzip zandronum && \
-    ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    dpkg-reconfigure --frontend noninteractive tzdata \
+    apt-get install -y \
     build-essential \
     git \
     libsdl2-dev \
     cmake \
-    && apt-get clean
+    make && \
+    apt-get clean && \
 
 # Freedoom 소스 코드 복제
 COPY . /app/freedoom
@@ -28,5 +27,5 @@ RUN cd /app/freedoom && \
 # 포트 노출
 EXPOSE 10666/udp
 
-# 엔트리포인트 설정
-CMD ["zandronum-server", "-iwad", "/usr/share/games/doom/freedoom2.wad", "+host", "1"]
+# 애플리케이션 시작
+CMD ["./freedoom"]
