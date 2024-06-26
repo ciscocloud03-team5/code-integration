@@ -14,8 +14,8 @@ WORKDIR /minecraft
 # Download the Minecraft server jar
 RUN wget $MINECRAFT_SERVER_URL -O server.jar
 
-# # Agree to the EULA
-# RUN echo "eula=true" > eula.txt
+# Agree to the EULA
+RUN echo "eula=true" > eula.txt
 
 # Expose the default Minecraft port
 EXPOSE 25565
