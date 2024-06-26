@@ -9,7 +9,7 @@ pipeline {
               serviceAccountName: jenkins-admin
               containers:
               - name: nginx
-                image: nginx:alpine
+                image: nginx:latest
                 command:
                 - sleep
                 args:
