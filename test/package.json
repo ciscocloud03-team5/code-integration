@@ -1,13 +1,11 @@
 {
-  "name": "javascript-racer-docker",
+  "name": "mariohtml5",
   "version": "1.0.0",
-  "description": "A JavaScript racer game Dockerized",
-  "main": "index.js",
+  "description": "HTML5 implementation of Super Mario Bros",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.17.2"
-    // 필요한 다른 종속성 추가
+    "express": "^4.17.1"
   }
 }
