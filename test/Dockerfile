@@ -1,5 +1,4 @@
-# 애플리케이션 포트 설정
-EXPOSE 8080
+
 # 기반이 될 이미지 선택
 FROM node:14-alpine
 
@@ -12,6 +11,9 @@ RUN npm install
 
 # 앱 소스 추가
 COPY . .
+
+# 애플리케이션 포트 설정
+EXPOSE 8080
 
 # 앱 실행
 CMD ["npm", "start"]
