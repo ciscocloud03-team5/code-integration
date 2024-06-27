@@ -89,7 +89,7 @@ pipeline {
         stage("Trigger CD Pipeline") {
             steps {
                 script {
-                    build job: 'gitops-ocr', parameters: [
+                    build job: 'gitops-orcttst', parameters: [
                         string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
                     ]
                 }
