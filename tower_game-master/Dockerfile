@@ -1,5 +1,5 @@
 # 기본 컨테이너 환경을 웹인 nginx로 구성
-FROM nginx:alphine 
+FROM nginx:alpine 
 
 # 작업할 디렉토리를 설정
 WORKDIR /app
