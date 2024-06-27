@@ -1,7 +1,7 @@
 {
   "name": "tower_game",
   "version": "1.0.0",
-  "description": "Tower Game Application",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "npm run build && node index.js",
@@ -27,7 +27,6 @@
     "webpack-cli": "^3.1.1"
   },
   "dependencies": {
-    "http-server": "^0.12.3",
     "cooljs": "^1.0.2"
   }
 }
