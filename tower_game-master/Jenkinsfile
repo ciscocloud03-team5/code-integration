@@ -65,7 +65,7 @@ pipeline {
                         git credentialsId: 'CJH_Github_Credential',
                             url: 'https://github.com/ciscocloud03-team5/code-integration.git',
                             branch: 'cjh'
-		sh 'ls -al mario'
+		sh 'ls -al towergame'
                     }
                 }
             }
