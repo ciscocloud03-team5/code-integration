@@ -85,6 +85,17 @@ pipeline {
                         }
                     }
                 }
+                
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def dockerImage = docker.build('my-docker-image') // Docker 이미지 이름
+                    dockerImage.inside {
+                        sh 'echo "running inside the Docker container"'
+                        // 추가적인 명령어 실행
+                    }
+                }
             }
         }
     }
