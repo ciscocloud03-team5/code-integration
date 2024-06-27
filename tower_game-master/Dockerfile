@@ -6,7 +6,7 @@ WORKDIR /app
 
 
 # # package.json과 package-lock.json을 작업 디렉토리로 복사
-# COPY package*.json ./
+COPY ./tower_game-master/package*.json ./
 
 
 # 로컬의 소스 코드를 작업 디렉토리로 복사
