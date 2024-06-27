@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # 종속성 설치
-RUN npm install
+RUN npm install --verbose
 
 # 애플리케이션 소스 코드 복사
 COPY . .
