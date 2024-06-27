@@ -47,7 +47,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "towergame"	// 애플리케이션 이름
+        APP_NAME = "towergame-dev"	// 애플리케이션 이름으로 gitops 앱이름 변경시 동일한 지점이므로 같이 바꿔주기
         RELEASE = "1.0.0"		// 릴리즈 버전
         DOCKER_USER = "spear77"	// DockerHub 사용자 이름
         DOCKERHUB_CREDENTIALS = credentials('CJH_Docker_credential')
