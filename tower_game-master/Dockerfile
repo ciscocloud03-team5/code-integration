@@ -7,6 +7,10 @@ WORKDIR /app
 
 # # package.json과 package-lock.json을 작업 디렉토리로 복사
 COPY ./tower_game-master/package*.json ./
+# 의존성 설치
+# package.json 파일에 명시된 모든 종속성(dependencies)을 설치
+# 개발 환경에서 필요한 추가적인 패키지들을 설치
+RUN npm install 
 
 
 # 로컬의 소스 코드를 작업 디렉토리로 복사
@@ -14,12 +18,6 @@ COPY ./tower_game-master .
 # 로컬 현재폴더는 도커파일 위치 기준
 # 원격 현재폴더는 위에서 설정한 작업 디렉토리 기준
 
-
-# 의존성 설치
-# package.json 파일에 명시된 모든 종속성(dependencies)을 설치
-# 개발 환경에서 필요한 추가적인 패키지들을 설치
-RUN npm install 
-RUN npm install --save-dev @babel/core @babel/preset-env babel-loader webpack webpack-cli
 
 # 프로덕션용 빌드 실행
 RUN npm run build
