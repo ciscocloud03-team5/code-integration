@@ -61,8 +61,6 @@ pipeline {
             steps {
                 container('python') {
                     script {
-                        sh 'pwd'
-                        sh 'ls -al'
                         git credentialsId: 'ocr', // GitHub 자격증명 사용
                           url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
                           branch: 'ocr' // 브랜치 이름
@@ -72,28 +70,34 @@ pipeline {
             }
         }
 
+        stage('Verify Game Execution') { // 게임 실행 확인 단계
+            steps {
+                container('python') {
+                    script {
+                        dir('ocr') { // 작업 디렉토리 설정
+                            sh '''
+                            python game.py < /dev/null &
+                            PID=$!
+                            sleep 5
+                            kill $PID
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
             steps {
                 container('docker') {
                     script {
-                        dir('/home/jenkins/agent/workspace/code-integration/ocr') { // 작업 디렉토리 설정
+                        dir('ocr') { // 작업 디렉토리 설정
                             sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .' // Docker 이미지 빌드
                             sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .' // Docker 이미지 빌드(latest 태그)
                             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin' // Docker 로그인
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}' // Docker 이미지 푸시
                             sh 'docker push ${IMAGE_NAME}:latest' // Docker 이미지 푸시(latest 태그)
                         }
-                    }
-                }
-                
-    stages {
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def dockerImage = docker.build('my-docker-image') // Docker 이미지 이름
-                    dockerImage.inside {
-                        sh 'echo "running inside the Docker container"'
-                        // 추가적인 명령어 실행
                     }
                 }
             }
