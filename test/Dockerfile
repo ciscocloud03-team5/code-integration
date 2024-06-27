@@ -6,8 +6,9 @@ FROM node:14-alpine
 WORKDIR /usr/src/app
 
 # 앱 종속성 설치
-COPY package.json ./
+COPY package*.json ./
 RUN npm install
+
 
 # 앱 소스 추가
 COPY . .
