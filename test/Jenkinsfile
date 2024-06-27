@@ -80,8 +80,18 @@ pipeline {
                             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                             sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                             sh 'docker push ${IMAGE_NAME}:latest'
-                        }
+                       }
                     }
+                }
+            }
+        }
+
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-ocr', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
                 }
             }
         }
