@@ -12,9 +12,15 @@ RUN npm install
 
 # 파일 COPY
 COPY . .
+COPY ./images .
+COPY ./music .
 
 # 포트 8080
 EXPOSE 8080
 
-# 애플리케이션 실행
-CMD ["npm", "start",]
+# 실행 권한 부여 (start.sh)
+RUN chmod +x start.sh
+
+# 컨테이너 시작 시 실행할 명령어 설정
+CMD ["./start.sh"]
+
