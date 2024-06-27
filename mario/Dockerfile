@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8080
 
 # 애플리케이션 실행
-CMD ["npx", "http-server", ".", "-p", "8080" ,"-c-1", "--default-file", "main.html"]
+CMD ["npm", "start"]
