@@ -51,7 +51,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "flask" // 애플리케이션 이름
+        APP_NAME = "flask-local" // 애플리케이션 이름
         RELEASE = "1.4" // 릴리즈 버전
         DOCKER_USER = "yunjin6121" // Docker Hub 사용자 이름
         DOCKERHUB_CREDENTIALS = credentials('yunjin6121-dockerhub') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
