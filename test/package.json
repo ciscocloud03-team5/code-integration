@@ -1,14 +1,13 @@
 {
-  "name": "code-integration",
+  "name": "javascript-racer-docker",
   "version": "1.0.0",
-  "description": "코드 통합 프로젝트",
+  "description": "A JavaScript racer game Dockerized",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    // 여기에 프로젝트에서 사용할 종속성을 추가합니다.
+    "express": "^4.17.2"
+    // 필요한 다른 종속성 추가
   }
 }
