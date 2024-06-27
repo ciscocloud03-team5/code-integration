@@ -1,14 +1,25 @@
-# 기본 컨테이너 환경을 웹인 nginx로 구성
-FROM nginx:alpine 
+# 기본 컨테이너 환경을 Node.js 14-alpine으로 설정
+FROM node:14-alpine
 
 # 작업할 디렉토리를 설정
 WORKDIR /app
 
-# 로컬 파일을 작업디렉토리로 copy 해주기
-COPY ./tower_game-master .
+# 소스 코드를 작업 디렉토리로 복사
+COPY . .
 
-# 포트 설정
+# 의존성 설치
+RUN npm install
+RUN npm install --save-dev @babel/core @babel/preset-env babel-loader webpack webpack-cli
+
+# 프로덕션용 빌드 실행
+RUN npm run build
+
+# 포트 설정 (Express 애플리케이션의 경우, 애플리케이션 코드에서 포트를 설정하므로 Dockerfile에서는 설정하지 않음)
 EXPOSE 6027
 
-# 서버 실행
-CMD ["nginx", "-g", "daemon off;"] 
+# 동적 애플리케이션 실행
+CMD ["node", "index.js"]
+
+
+# 정적 서버 실행
+#CMD ["nginx", "-g", "daemon off;"] 
