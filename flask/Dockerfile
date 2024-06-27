@@ -28,6 +28,5 @@ EOF
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 
-# RUN FILE
-CMD ["python", "./app.py"]
+
 
