@@ -4,11 +4,18 @@ FROM node:14-alpine
 # 작업할 디렉토리를 설정
 WORKDIR /app
 
-# 소스 코드를 작업 디렉토리로 복사
-COPY . .
+
+# # package.json과 package-lock.json을 작업 디렉토리로 복사
+# COPY package*.json ./
+
+
+# 로컬의 소스 코드를 작업 디렉토리로 복사
+COPY ./tower_game-master .
 
 # 의존성 설치
-RUN npm install
+# package.json 파일에 명시된 모든 종속성(dependencies)을 설치
+# 개발 환경에서 필요한 추가적인 패키지들을 설치
+RUN npm install 
 RUN npm install --save-dev @babel/core @babel/preset-env babel-loader webpack webpack-cli
 
 # 프로덕션용 빌드 실행
