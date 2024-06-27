@@ -66,6 +66,7 @@ pipeline {
                             url: 'https://github.com/ciscocloud03-team5/code-integration.git',
                             branch: 'cjh'
 		sh 'ls -al tower_game-master'
+        sh 'ls -al tower_game-master/tower_game-master'
                     }
                 }
             }
