@@ -4,8 +4,9 @@ FROM alpine:latest
 # directory set
 WORKDIR /app
 
-# nginx package add
+# Python 설치
 RUN apk add nginx
+RUN apk add --no-cache python3 py3-pip
 
 # file copy
 COPY . .
@@ -14,4 +15,5 @@ COPY . .
 EXPOSE 80
 
 # excute 
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
+CMD ["python3", "-m", "http.server", "80"]

@@ -7,7 +7,7 @@ COPY requirements.txt /app
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install -r requirements.txt
 
-COPY . /app
+COPY . .
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]
@@ -19,10 +19,15 @@ apk update
 apk add git
 EOF
 
+EXPOSE 8000
+
 RUN <<EOF
 addgroup -S docker
 adduser -S --shell /bin/bash --ingroup docker vscode
 EOF
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
+
+# RUN FILE
+CMD ["python", "./app.py"]
 
