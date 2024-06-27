@@ -13,8 +13,8 @@ RUN npm install
 # 파일 COPY
 COPY . .
 
-# 포트 9500
-EXPOSE 9500
+# 포트 8080
+EXPOSE 8080
 
 # 애플리케이션 실행
 CMD ["npm", "start",]
