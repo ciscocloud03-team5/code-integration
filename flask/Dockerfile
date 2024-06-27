@@ -19,6 +19,8 @@ apk update
 apk add git
 EOF
 
+EXPOSE 8000
+
 RUN <<EOF
 addgroup -S docker
 adduser -S --shell /bin/bash --ingroup docker vscode
