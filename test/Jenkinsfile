@@ -1,6 +1,5 @@
 pipeline {
     agent {
-        // Kubernetes 환경과 Jenkins 에이전트용 Pod 템플릿을 정의
         kubernetes {
             cloud 'team5-eks'
             yaml """
@@ -9,8 +8,8 @@ pipeline {
             spec:
               serviceAccountName: jenkins-admin
               containers:
-              - name: python
-                image: python:3.9-slim
+              - name: node14
+                image: node:14-alpine
                 command:
                 - sleep
                 args:
@@ -48,59 +47,41 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "my-python-game" // 애플리케이션 이름
-        RELEASE = "1.0" // 릴리즈 버전
-        DOCKER_USER = "eleys7485" // Docker Hub 사용자 이름
-        DOCKERHUB_CREDENTIALS = credentials('ocrhub') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
-        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
+        APP_NAME = "ocr-tttf"		// 애플리케이션 이름
+        RELEASE = "1.0.0"		// 릴리즈 버전
+        DOCKER_USER = "eleys7485"	// DockerHub 사용자 이름
+        DOCKERHUB_CREDENTIALS = credentials('ocrhub')
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
     stages {
-        stage("Checkout from SCM") { // 소스 코드 관리(SCM)에서 체크아웃 단계
+        stage("Checkout from SCM") {	// 체크아웃 단계
             steps {
-                container('python') {
+                container('node14') {
                     script {
-                        git credentialsId: 'ocr', // GitHub 자격증명 사용
-                          url: 'https://github.com/ciscocloud03-team5/code-integration', // GitHub 리포지토리 URL
-                          branch: 'ocr' // 브랜치 이름
-                        sh 'ls -al'
+		sh 'pwd'
+		sh 'ls -al'
+                        git credentialsId: 'ocr',
+                            url: 'https://github.com/ciscocloud03-team5/code-integration.git',
+                            branch: 'ocr'
                     }
                 }
             }
         }
 
-        stage('Verify Game Execution') { // 게임 실행 확인 단계
-            steps {
-                container('python') {
-                    script {
-                        dir('ocr') { // 작업 디렉토리 설정
-                            sh '''
-                            python game.py < /dev/null &
-                            PID=$!
-                            sleep 5
-                            kill $PID
-                            '''
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
+        stage('Build and Push Docker Image') {	// Docker 이미지 Push
             steps {
                 container('docker') {
                     script {
-                        dir('ocr') { // 작업 디렉토리 설정
-                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .' // Docker 이미지 빌드
-                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .' // Docker 이미지 빌드(latest 태그)
-                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin' // Docker 로그인
-                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}' // Docker 이미지 푸시
-                            sh 'docker push ${IMAGE_NAME}:latest' // Docker 이미지 푸시(latest 태그)
+                        dir('/home/jenkins/agent/workspace/test-ocr/test') {
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .'
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            sh 'docker push ${IMAGE_NAME}:latest'
                         }
                     }
                 }
             }
         }
-    }
-}
