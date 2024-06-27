@@ -1,20 +1,20 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14-alpine
+# 베이스 이미지 설정
+FROM node:14
 
-# Set the working directory in the container
+# 작업 디렉토리 설정
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# package.json 및 package-lock.json 파일 복사
 COPY package*.json ./
 
-# Install dependencies
+# 종속성 설치
 RUN npm install
 
-# Bundle app source
+# 애플리케이션 소스 코드 복사
 COPY . .
 
-# Expose port 3000 to the outside world
-EXPOSE 3000
+# 애플리케이션 포트 설정
+EXPOSE 8080
 
-# Define the command to run your app using npm
-CMD ["npm", "start"]
+# 애플리케이션 실행 명령어
+CMD [ "node", "index.js" ]
