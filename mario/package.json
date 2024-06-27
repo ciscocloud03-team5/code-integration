@@ -2,7 +2,7 @@
   "name": "mariohtml5",
   "version": "1.0.0",
   "description": "HTML5 implementation of Super Mario Bros",
-  "main": "main.html",
+  "main": "index.html",
   "scripts": {
     "start": "npx http-server . -p 8080 -c-1 --default-file main.html"
   },
