@@ -7,11 +7,14 @@ WORKDIR /app
 # package.json과 package-lock.json을 복사
 COPY package*.json ./
 
+# 의존성 설치
+RUN npm install
+
 # 파일 COPY
 COPY . .
 
 # 포트 8080
 EXPOSE 8080
 
-# 서버 실행
-CMD ["npx", "http-server", ".", "-p", "8080"]
+# 애플리케이션 실행
+CMD ["npx", "http-server", ".", "-p", "8080" ,"-c-1", "--default-file", "main.html"]
