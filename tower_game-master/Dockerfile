@@ -23,7 +23,7 @@ COPY ./tower_game-master .
 RUN npm run build
 
 # 포트 설정 (Express 애플리케이션의 경우, 애플리케이션 코드에서 포트를 설정하므로 Dockerfile에서는 설정하지 않음)
-EXPOSE 6027
+EXPOSE 8082
 
 # 동적 애플리케이션 실행
 CMD ["node", "index.js"]
