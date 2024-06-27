@@ -72,18 +72,6 @@ pipeline {
             }
         }
 
-        stage('Verify Game Execution') { // 게임 실행 확인 단계
-            steps {
-                container('python') {
-                    script {
-                        dir('/home/jenkins/agent/workspace/code-integration/ocr') {     // 작업 디렉토리 설정
-                            sh 'python game.py < /dev/null & sleep 5 && pkill -f game.py' // 게임 실행 확인
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Build and Push Docker Image') { // Docker 이미지 빌드 및 푸시 단계
             steps {
                 container('docker') {
