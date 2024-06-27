@@ -4,7 +4,7 @@
   "description": "HTML5 implementation of Super Mario Bros",
   "main": "main.html",
   "scripts": {
-    "start": "npx http-server . -p 8080"
+    "start": "npx http-server . -p 8080 -c-1 --default-file main.html"
   },
   "dependencies": {
     "http-server": "^0.12.3"
