@@ -1,0 +1,14 @@
+{
+  "name": "code-integration",
+  "version": "1.0.0",
+  "description": "코드 통합 프로젝트",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    // 여기에 프로젝트에서 사용할 종속성을 추가합니다.
+  }
+}
