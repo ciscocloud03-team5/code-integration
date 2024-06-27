@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 9500
 
 # 애플리케이션 실행
-CMD ["npm", "start"]
+CMD ["npm", "start", "server.js"]
