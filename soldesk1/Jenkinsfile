@@ -92,7 +92,7 @@ pipeline {
         stage("Trigger CD Pipeline") {
                 steps {
                     script {
-                        build job: 'soldesk-code', parameters: [
+                        build job: 'gitops-soldesk', parameters: [
                             string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
                         ]
                     }
