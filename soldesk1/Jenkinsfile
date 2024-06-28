@@ -96,6 +96,7 @@ pipeline {
                 script {
                     build job: 'gitops-soldesk', parameters: [
                         string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                   ]
                 }
             }
         }
