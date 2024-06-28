@@ -54,7 +54,7 @@ pipeline {
         APP_NAME = "soldesk-local" // 애플리케이션 이름
         RELEASE = "1.21.6" // 릴리즈 버전
         DOCKER_USER = "eleys7485" // Docker Hub 사용자 이름
-        DOCKERHUB_CREDENTIALS = credentials('ocr') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
+        DOCKERHUB_CREDENTIALS = credentials('ocrhub') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
     }
