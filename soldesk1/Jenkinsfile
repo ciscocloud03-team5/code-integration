@@ -78,7 +78,7 @@ pipeline {
             steps {
                 container('nginx') {
                     script {
-                        dir('/home/jenkins/agent/workspace/yjk-pipeline/flask') { // 작업 디렉토리 설정
+                        dir('/home/jenkins/agent/workspace/soldesk-code/soldesk') { // 작업 디렉토리 설정
                             sh 'pwd'
                             sh 'ls -al'
                             sh 'ls'
