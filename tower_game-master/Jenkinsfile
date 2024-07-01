@@ -50,7 +50,7 @@ pipeline {
         APP_NAME = "towergame-dev"	// 애플리케이션 이름으로 gitops 앱이름 변경시 동일한 지점이므로 같이 바꿔주기
         RELEASE = "1.0.0"		// 릴리즈 버전
         DOCKER_USER = "spear77"	// DockerHub 사용자 이름
-        DOCKERHUB_CREDENTIALS = credentials('CJH_Docker_credential')
+        DOCKERHUB_CREDENTIALS = credentials('CJH_DOCKER_CREDENTIAL')
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -62,7 +62,7 @@ pipeline {
                     script {
 		                sh 'pwd'
 		                sh 'ls -al'
-                        git credentialsId: 'CJH_Github_Credential',
+                        git credentialsId: 'CJH_GITHUB_CREDENTIAL',
                             url: 'https://github.com/ciscocloud03-team5/code-integration.git',
                             branch: 'cjh'
 		                sh 'ls -al tower_game-master'
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        dir('/home/jenkins/agent/workspace/towergame/tower_game-master') {
+                        dir('/home/jenkins/agent/workspace/towergame-ci/tower_game-master') {
                             sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
                             sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .'
                             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
