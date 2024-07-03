@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # npm 캐시를 정리하고 의존성을 설치합니다.
-RUN npm cache clean --force && npm install
+RUN npm install
 
 # 애플리케이션의 소스 코드를 복사합니다.
 COPY . .
