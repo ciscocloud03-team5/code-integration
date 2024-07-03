@@ -7,8 +7,8 @@ WORKDIR /app
 # 필요한 파일 복사
 COPY . /app
 
-# 포트 설정 (도구에 따라 필요한 포트를 설정해야 할 수 있습니다)
+# 포트 설정 (Minecraft 서버의 기본 포트는 25565)
 EXPOSE 25565
 
 # 컨테이너 시작 시 실행할 명령
-CMD ["java", "-jar", "ServerScript.jar"]
+CMD ["java", "-Xmx1024M", "-Xms1024M", "-jar", "minecraft_server.1.16.5.jar", "nogui"]
