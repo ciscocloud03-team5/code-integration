@@ -5,7 +5,7 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # 필요한 파일 복사
-COPY ServerScript.jar /app
+COPY . /app
 
 # 포트 설정 (도구에 따라 필요한 포트를 설정해야 할 수 있습니다)
 EXPOSE 25565
