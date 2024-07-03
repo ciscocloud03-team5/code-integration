@@ -58,7 +58,7 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                container('openjdk:11-jre-slim') {
+                container('open') {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
