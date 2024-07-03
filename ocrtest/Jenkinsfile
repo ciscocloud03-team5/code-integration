@@ -62,7 +62,7 @@ pipeline {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
-                        git credentialsId: 'ocrhub', url: 'https://github.com/ciscocloud03-team5/code-integration', branch: 'ocr'
+                        git credentialsId: 'ocr', url: 'https://github.com/ciscocloud03-team5/code-integration', branch: 'ocr'
                     }
                 }
             }
