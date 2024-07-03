@@ -8,8 +8,8 @@ pipeline {
             spec:
               serviceAccountName: jenkins-admin
               containers:
-              - name: nginx
-                image: nginx:1.21.6-alpine
+              - name: open
+                image: openjdk:11-jre-slim
                 command:
                 - sleep
                 args:
@@ -58,11 +58,11 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                container('nginx') {
+                container('openjdk:11-jre-slim') {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
-                        git credentialsId: 'ocr', url: 'https://github.com/ciscocloud03-team5/code-integration', branch: 'ocr'
+                        git credentialsId: 'ocrhub', url: 'https://github.com/ciscocloud03-team5/code-integration', branch: 'ocr'
                     }
                 }
             }
