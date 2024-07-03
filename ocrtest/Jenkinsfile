@@ -86,14 +86,13 @@ pipeline {
                 }
             }
         }
-    }
-     stage("Trigger CD Pipeline") {
-                steps {
-                    script {
-                        build job: 'gitops-ocr123', parameters: [
-                            string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
-                        ]
-                    }
+        
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-ocr123', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
                 }
             }
         }
