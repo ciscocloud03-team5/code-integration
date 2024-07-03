@@ -8,8 +8,8 @@ pipeline {
             spec:
               serviceAccountName: jenkins-admin
               containers:
-              - name: node
-                image: node:14
+              - name: nginx
+                image: nginx:alpine
                 command:
                 - sleep
                 args:
@@ -58,7 +58,7 @@ pipeline {
     stages {
         stage("Checkout from SCM") {
             steps {
-                container('node') {
+                container('nginx') {
                     script {
                         sh 'pwd'
                         sh 'ls -al'
