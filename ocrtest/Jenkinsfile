@@ -9,7 +9,7 @@ pipeline {
               serviceAccountName: jenkins-admin
               containers:
               - name: node
-                image: node:18
+                image: node:14
                 command:
                 - sleep
                 args:
