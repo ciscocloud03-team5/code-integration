@@ -1,0 +1,99 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'team5-eks'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              serviceAccountName: jenkins-admin
+              containers:
+              - name: alpine
+                image: alpine:latest
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+              - name: docker
+                image: docker
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+                - name: docker-socket
+                  mountPath: /var/run
+              - name: docker-daemon
+                image: docker:dind
+                securityContext:
+                  privileged: true
+                volumeMounts:
+                - name: docker-socket
+                  mountPath: /var/run
+              volumes:
+              - name: workspace-volume
+                emptyDir: {}
+              - name: docker-socket
+                emptyDir: {}
+            """
+        }
+    }
+
+    environment {
+        APP_NAME = "2048-local"		// 애플리케이션 이름
+        RELEASE = "1.0.0"		// 릴리즈 버전
+        DOCKER_USER = "yunjin6121"	// DockerHub 사용자 이름
+        DOCKERHUB_CREDENTIALS = credentials('yunjin6121-dockerhub')
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage("Checkout from SCM") {	// 체크아웃 단계
+            steps {
+                container('alpine') {
+                    script {
+		sh 'pwd'
+		sh 'ls -al'
+                        git credentialsId: 'yunjin6121',
+                            url: 'https://github.com/ciscocloud03-team5/code-integration.git',
+                            branch: 'yjk'
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {	// Docker 이미지 Push
+            steps {
+                container('docker') {
+                    script {
+                        dir('/home/jenkins/agent/workspace/2048/2048') {
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                            sh 'docker build --no-cache -t ${IMAGE_NAME}:latest .'
+                            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                            sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                            sh 'docker push ${IMAGE_NAME}:latest'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-2048', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+        }
+    }
+}
