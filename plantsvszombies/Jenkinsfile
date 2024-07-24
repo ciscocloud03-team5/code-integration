@@ -1,0 +1,100 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'team5-eks'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              serviceAccountName: jenkins-admin
+              containers:
+              - name: ubuntu
+                image: ubuntu:20.04
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+              - name: docker
+                image: docker
+                command:
+                - sleep
+                args:
+                - 99d
+                tty: true
+                volumeMounts:
+                - name: workspace-volume
+                  mountPath: /home/jenkins/agent
+                - name: docker-socket
+                  mountPath: /var/run
+              - name: docker-daemon
+                image: docker:dind
+                securityContext:
+                  privileged: true
+                volumeMounts:
+                - name: docker-socket
+                  mountPath: /var/run
+              volumes:
+              - name: workspace-volume
+                emptyDir: {}
+              - name: docker-socket
+                emptyDir: {}
+            """
+        }
+    }
+
+    environment {
+        APP_NAME = "soldesk-ocr" // 애플리케이션 이름
+        RELEASE = "1.21.6" // 릴리즈 버전
+        DOCKER_USER = "eleys7485" // Docker Hub 사용자 이름
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub') // Jenkins Credentials에 저장된 Docker Hub 자격증명 ID
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}" // 이미지 이름
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}" // 이미지 태그
+    }
+
+    stages {
+        stage("Checkout from SCM") {
+            steps {
+                container('ubuntu') {
+                    script {
+                        sh 'pwd'
+                        sh 'ls -al'
+                        git credentialsId: 'ocrhub', url: 'https://github.com/ciscocloud03-team5/code-integration', branch: 'ocr'
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                container('docker') {
+                    script {
+                        def imageName = "${IMAGE_NAME}:${IMAGE_TAG}"
+                        def latestImageName = "${IMAGE_NAME}:latest"
+                        
+                        dir('/home/jenkins/agent/workspace/ocr-code/ocrtest') {
+                            sh "docker build --no-cache -t ${imageName} ."
+                            sh "docker build --no-cache -t ${latestImageName} ."
+                            sh "echo \$DOCKERHUB_CREDENTIALS_PSW | docker login -u \$DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                            sh "docker push ${imageName}"
+                            sh "docker push ${latestImageName}"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    build job: 'gitops-ocr123', parameters: [
+                        string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                    ]
+                }
+            }
+        }
+    }
+}
